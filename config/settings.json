@@ -1,0 +1,14 @@
+{
+  "starting_balance": 5000,
+  "risk_pct": 0.005,
+  "max_risk_pct": 0.01,
+  "daily_loss_cap_pct": 0.02,
+  "prop_daily_loss_limit_pct": 0.03,
+  "max_drawdown_pct": 0.10,
+  "leverage_cap": 5,
+  "instruments": ["BTC", "ETH"],
+  "hold_window_days": 5,
+  "min_rr": 2.0,
+  "max_losses_per_day": 2,
+  "max_open_positions": 1
+}
