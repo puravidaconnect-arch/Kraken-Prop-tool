@@ -24,7 +24,7 @@ ticket = build_ticket(pair, date, analysis, account_state, settings, funding_rat
 ```
 Strategy → plan mapping is code in `src/planner.py`:
 - uptrend → buy pullback to the prior swing high turned support (if one sits between the
-  50 EMA and price) else the 50 EMA; stop 0.1 ATR under the last swing low
+  50 EMA and price) else the 50 EMA; stop 0.1 ATR under the highest swing low below the zone
 - downtrend → mirror (short)
 - ranging → buy within 1 ATR of the low band / sell within 1 ATR of the high band;
   stop 0.5 ATR outside the band; no trade if the 2:1 target lies beyond the opposite band

@@ -24,9 +24,10 @@ After-trade intake for a closed trade. Follow CLAUDE.md §6 `/report`. Minimum t
    numbers that contradict each other. If it prints `REPORT REFUSED`, show the
    reason and re-check the values with the human; use `--force` only after they
    confirm the numbers are right.
-6. Show the closed ticket JSON, then run the reviewer
-   (`.claude/agents/reviewer.md`, Phase 4). Until the reviewer exists, say
-   "reviewer: not built yet (Phase 4)".
+6. Show the closed ticket JSON, then run the reviewer immediately
+   (`.claude/agents/reviewer.md`): `python -m src.review suggest <id>`, write the
+   one-paragraph lesson, `python -m src.review record <id> …`. Show the tag and
+   the lesson. A process lesson is applied to the named agent file now.
 
 If the trade never filled: `python -m src.report cancel <id> --note ".."`.
 If it filled and is still open: `python -m src.report open <id> --fill-price X --opened-at T`.

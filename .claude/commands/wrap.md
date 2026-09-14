@@ -7,8 +7,8 @@ You are the coordinator; read `.claude/agents/coordinator.md` first.
    - filled and still open → `python -m src.report open ...`
    - closed → run `/report` for it now
    - never filled and abandoned → `python -m src.report cancel ...`
-2. For every trade closed today without a `review_tag`, run the reviewer
-   (Phase 4; until then say "reviewer: not built yet").
+2. `python -m src.review unreviewed`. For every trade listed, run the reviewer
+   (`.claude/agents/reviewer.md`) before wrapping.
 3. Ask the human for a one-line market posture for tomorrow (or write one
    from today's market reads if they say "you write it"). Then:
    ```

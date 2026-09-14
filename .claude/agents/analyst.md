@@ -23,7 +23,8 @@ from src.analyst import analyse
 analysis = analyse(md.daily, md.weekly)
 ```
 The rules live in `src/analyst.py` (`classify`, `DEFAULT_PARAMS`). Do not
-re-derive them in prose. Rule order: uptrend → downtrend → coiling → ranging → unclassified.
+re-derive them in prose. Rule order: coiling → uptrend → downtrend → ranging → unclassified
+(coiling first: a contracting range also prints higher lows and lower highs; evals 2026-09-14).
 
 Rule summary (tune only via evals + a recorded lesson):
 - uptrend: close > 50 EMA > 200 EMA, 50 EMA slope > 0 over 10 bars, ≥ 2 higher swing lows in 40 bars

@@ -70,7 +70,9 @@ def compute_levels(df: pd.DataFrame, p: dict = DEFAULT_PARAMS) -> dict:
 
 
 def classify(df: pd.DataFrame, p: dict = DEFAULT_PARAMS) -> MarketRead:
-    """Apply the §4 rules in order: uptrend, downtrend, coiling, ranging, else unclassified."""
+    """Apply the §4 rules: coiling first (a contracting range also prints higher lows
+    and lower highs, so it must pre-empt the trend tests), then uptrend, downtrend,
+    ranging, else unclassified."""
     if len(df) < p["min_bars"]:
         return MarketRead("unclassified", [f"only {len(df)} bars, need {p['min_bars']}"])
 
@@ -97,14 +99,14 @@ def classify(df: pd.DataFrame, p: dict = DEFAULT_PARAMS) -> MarketRead:
     flat = ema50_move < p["flat_slope_atr"] * lv["atr14"]
     ev["ema50_move_atr"] = round(ema50_move / lv["atr14"], 2)
 
+    if atr_declines >= p["coil_min_declines"] and contracting:
+        return MarketRead("coiling", [f"ATR fell in {atr_declines}/{p['coil_bars']} bars and range is contracting: wait for breakout"], lv, ev)
     if close > e50 and e50 > e200 and slope > 0 and higher_lows >= p["min_higher_lows"]:
         return MarketRead("uptrend", [f"close > 50 EMA > 200 EMA, 50 EMA slope +{slope:.2f}% / {p['slope_bars']} bars, "
                                       f"{higher_lows} higher swing lows in {p['trend_lookback']} bars"], lv, ev)
     if close < e50 and e50 < e200 and slope < 0 and lower_highs >= p["min_higher_lows"]:
         return MarketRead("downtrend", [f"close < 50 EMA < 200 EMA, 50 EMA slope {slope:.2f}% / {p['slope_bars']} bars, "
                                         f"{lower_highs} lower swing highs in {p['trend_lookback']} bars"], lv, ev)
-    if atr_declines >= p["coil_min_declines"] and contracting:
-        return MarketRead("coiling", [f"ATR fell in {atr_declines}/{p['coil_bars']} bars and range is contracting: wait for breakout"], lv, ev)
     if flat and lv["band_high_touches"] >= p["min_band_touches"] and lv["band_low_touches"] >= p["min_band_touches"]:
         return MarketRead("ranging", [f"50 EMA slope {slope:+.2f}% (flat), band {lv['band_low']}–{lv['band_high']} touched "
                                       f"{lv['band_low_touches']}x low / {lv['band_high_touches']}x high in {p['range_lookback']} bars"], lv, ev)

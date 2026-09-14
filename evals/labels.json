@@ -1,0 +1,142 @@
+{
+  "synth_uptrend_0.csv": {
+    "pair": "BTC",
+    "cutoff": "2024-10-26",
+    "expected_class": "uptrend",
+    "expected_outcome": "trade",
+    "source": "synthetic"
+  },
+  "synth_uptrend_1.csv": {
+    "pair": "BTC",
+    "cutoff": "2024-10-26",
+    "expected_class": "uptrend",
+    "expected_outcome": "trade",
+    "source": "synthetic"
+  },
+  "synth_uptrend_2.csv": {
+    "pair": "BTC",
+    "cutoff": "2024-10-26",
+    "expected_class": "uptrend",
+    "expected_outcome": "trade",
+    "source": "synthetic"
+  },
+  "synth_uptrend_3.csv": {
+    "pair": "BTC",
+    "cutoff": "2024-10-26",
+    "expected_class": "uptrend",
+    "expected_outcome": "trade",
+    "source": "synthetic"
+  },
+  "synth_uptrend_4.csv": {
+    "pair": "BTC",
+    "cutoff": "2024-10-26",
+    "expected_class": "uptrend",
+    "expected_outcome": "trade",
+    "source": "synthetic"
+  },
+  "synth_downtrend_0.csv": {
+    "pair": "BTC",
+    "cutoff": "2024-10-26",
+    "expected_class": "downtrend",
+    "expected_outcome": "trade",
+    "source": "synthetic"
+  },
+  "synth_downtrend_1.csv": {
+    "pair": "BTC",
+    "cutoff": "2024-10-26",
+    "expected_class": "downtrend",
+    "expected_outcome": "trade",
+    "source": "synthetic"
+  },
+  "synth_downtrend_2.csv": {
+    "pair": "BTC",
+    "cutoff": "2024-10-26",
+    "expected_class": "downtrend",
+    "expected_outcome": "trade",
+    "source": "synthetic"
+  },
+  "synth_downtrend_3.csv": {
+    "pair": "BTC",
+    "cutoff": "2024-10-26",
+    "expected_class": "downtrend",
+    "expected_outcome": "trade",
+    "source": "synthetic"
+  },
+  "synth_downtrend_4.csv": {
+    "pair": "BTC",
+    "cutoff": "2024-10-26",
+    "expected_class": "downtrend",
+    "expected_outcome": "trade",
+    "source": "synthetic"
+  },
+  "synth_coiling_0.csv": {
+    "pair": "BTC",
+    "cutoff": "2024-10-26",
+    "expected_class": "coiling",
+    "expected_outcome": "no_trade",
+    "source": "synthetic"
+  },
+  "synth_coiling_1.csv": {
+    "pair": "BTC",
+    "cutoff": "2024-10-26",
+    "expected_class": "coiling",
+    "expected_outcome": "no_trade",
+    "source": "synthetic"
+  },
+  "synth_coiling_2.csv": {
+    "pair": "BTC",
+    "cutoff": "2024-10-26",
+    "expected_class": "coiling",
+    "expected_outcome": "no_trade",
+    "source": "synthetic"
+  },
+  "synth_coiling_3.csv": {
+    "pair": "BTC",
+    "cutoff": "2024-10-26",
+    "expected_class": "coiling",
+    "expected_outcome": "no_trade",
+    "source": "synthetic"
+  },
+  "synth_coiling_4.csv": {
+    "pair": "BTC",
+    "cutoff": "2024-10-26",
+    "expected_class": "coiling",
+    "expected_outcome": "no_trade",
+    "source": "synthetic"
+  },
+  "synth_range_0.csv": {
+    "pair": "BTC",
+    "cutoff": "2024-11-01",
+    "expected_class": "ranging",
+    "expected_outcome": "trade",
+    "source": "synthetic"
+  },
+  "synth_range_1.csv": {
+    "pair": "BTC",
+    "cutoff": "2024-10-20",
+    "expected_class": "ranging",
+    "expected_outcome": "trade",
+    "source": "synthetic"
+  },
+  "synth_range_2.csv": {
+    "pair": "BTC",
+    "cutoff": "2024-11-13",
+    "expected_class": "ranging",
+    "expected_outcome": "trade",
+    "source": "synthetic"
+  },
+  "synth_range_3.csv": {
+    "pair": "BTC",
+    "cutoff": "2024-10-08",
+    "expected_class": "ranging",
+    "expected_outcome": "trade",
+    "source": "synthetic"
+  },
+  "synth_range_4.csv": {
+    "pair": "BTC",
+    "cutoff": "2024-11-25",
+    "expected_class": "ranging",
+    "expected_outcome": "trade",
+    "source": "synthetic"
+  }
+}

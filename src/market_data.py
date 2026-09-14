@@ -127,15 +127,54 @@ def get_market(pair: str, session: requests.Session | None = None) -> MarketData
     return MarketData(pair, daily, weekly, funding, datetime.now(timezone.utc).isoformat(timespec="seconds"))
 
 
+KRAKEN_EXPORT_COLUMNS = ["time", "open", "high", "low", "close", "volume", "count"]
+
+
 def load_ohlc_csv(path: str | Path) -> pd.DataFrame:
-    """OHLCV from a CSV with the same columns (evals/backtests only, never /plan)."""
-    df = pd.read_csv(path)
-    missing = {"time", "open", "high", "low", "close"} - set(df.columns)
-    if missing:
-        raise MarketDataError(f"CSV {path} missing columns {sorted(missing)}")
-    df["time"] = pd.to_datetime(df["time"], utc=True)
-    return df.sort_values("time").reset_index(drop=True)
+    """OHLCV from a CSV (evals/backtests only, never /plan). Accepts our own
+    export or Kraken's headerless historical OHLCVT files
+    (unix_time,open,high,low,close,volume,trades)."""
+    head = Path(path).read_text(encoding="utf-8", errors="ignore").splitlines()[:1]
+    headerless = bool(head) and head[0].split(",")[0].strip().isdigit()
+    if headerless:
+        df = pd.read_csv(path, header=None, names=KRAKEN_EXPORT_COLUMNS)
+        df["time"] = pd.to_datetime(df["time"].astype(int), unit="s", utc=True)
+    else:
+        df = pd.read_csv(path)
+        missing = {"time", "open", "high", "low", "close"} - set(df.columns)
+        if missing:
+            raise MarketDataError(f"CSV {path} missing columns {sorted(missing)}")
+        df["time"] = pd.to_datetime(df["time"], utc=True)
+    for col in ("open", "high", "low", "close"):
+        df[col] = df[col].astype(float)
+    return df.sort_values("time").drop_duplicates("time").reset_index(drop=True)
 
 
 def save_ohlc_csv(df: pd.DataFrame, path: str | Path) -> None:
     df.to_csv(path, index=False)
+
+
+def main(argv=None) -> int:
+    """python -m src.market_data download BTC --out evals/charts/BTC_daily.csv"""
+    import argparse
+    ap = argparse.ArgumentParser(description="Download Kraken daily OHLCV to CSV (max 720 bars per call).")
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    d = sub.add_parser("download"); d.add_argument("pair"); d.add_argument("--timeframe", default="daily", choices=list(INTERVALS))
+    d.add_argument("--out", required=True)
+    args = ap.parse_args(argv)
+    try:
+        df = fetch_ohlc(args.pair.upper(), args.timeframe)
+    except MarketDataError as exc:
+        print(f"MARKET DATA FAILED: {exc}")
+        return 1
+    out = Path(args.out)
+    if out.exists():  # merge with what is already there so repeated runs extend history
+        df = pd.concat([load_ohlc_csv(out), df]).drop_duplicates("time").sort_values("time").reset_index(drop=True)
+    save_ohlc_csv(df, out)
+    print(f"wrote {len(df)} {args.timeframe} bars to {out} ({df['time'].iloc[0].date()} → {df['time'].iloc[-1].date()})")
+    return 0
+
+
+if __name__ == "__main__":
+    import sys
+    sys.exit(main())
