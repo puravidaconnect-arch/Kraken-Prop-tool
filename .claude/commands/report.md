@@ -32,6 +32,6 @@ After-trade intake for a closed trade. Follow CLAUDE.md §6 `/report`. Minimum t
 If the trade never filled: `python -m src.report cancel <id> --note ".."`.
 
 Phone alternative: the human can do steps 2–5 without the terminal via the local
-form (`python -m src.form --lan`, then open the printed URL on the phone and
-enter the printed PIN). It writes the same JSON. Trades closed that way show up as unreviewed at /wrap.
+form (`python -m src.form --lan`, then open the printed URL on the phone). It
+writes the same JSON. Trades closed that way show up as unreviewed at /wrap.
 If it filled and is still open: `python -m src.report open <id> --fill-price X --opened-at T`.

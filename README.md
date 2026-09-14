@@ -85,7 +85,8 @@ From your phone instead: on the computer run
 python -m src.form --lan
 ```
 
-and open the printed URL with the printed PIN. It writes the same journal JSON.
+and open the printed URL. It writes the same journal JSON. There is no login,
+so stop it when you are done and only run it on a network you trust.
 
 ### 4. End of day: `/wrap` (or say "wrap it up")
 
