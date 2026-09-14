@@ -7,6 +7,8 @@ Morning desk. Follow CLAUDE.md §6 `/desk`. You are the coordinator; read
    ```
    python -m src.desk
    ```
+   - If it prints `SYNC FAILED` → the record could not be pulled from GitHub. Say so and stop;
+     do not trade on a stale journal.
    - If it prints `Run /wrap for <date> first.` → say exactly that and stop.
    - If it prints `REPORT NEEDED …` → run `/report` for that ticket, then re-run.
    - If it prints `MARKET DATA FAILED` → say so and stop. No report from stale data.

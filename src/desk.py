@@ -17,6 +17,7 @@ from src.events import fresh_flag, in_window
 from src.guardian import can_trade_today
 from src.market_data import MarketDataError, get_market
 from src.state import Paths, DEFAULT, load_json, load_last_wrap, roll_day, save_json
+from src.sync import SyncError, pull
 
 
 def last_lessons(paths: Paths, n: int = 5) -> list[str]:
@@ -54,7 +55,15 @@ def verdict(pre_ok: bool, events_flag: str | None, reads: dict) -> str:
     return "WAIT"
 
 
-def desk(today: str, paths: Paths = DEFAULT, market_getter=get_market, out=sys.stdout) -> int:
+def desk(today: str, paths: Paths = DEFAULT, market_getter=get_market, out=sys.stdout, sync: bool = True) -> int:
+    if sync:
+        try:
+            status = pull(paths.root)
+        except SyncError as exc:
+            print(f"SYNC FAILED: {exc}. Stopping — the record may be stale.", file=out)
+            return 1
+        if status != "sync off":
+            print(f"record: {status}", file=out)
     settings = load_json(paths.settings)
     tickets = journal.list_tickets(journal_dir=paths.journal)
     ok, why = wrap_is_current(load_last_wrap(paths.last_wrap).get("date"), today, not tickets)
@@ -120,8 +129,9 @@ def desk(today: str, paths: Paths = DEFAULT, market_getter=get_market, out=sys.s
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="Morning desk report.")
     ap.add_argument("--date", default=_date.today().isoformat())
+    ap.add_argument("--no-sync", action="store_true", help="do not pull the record from origin/main first")
     args = ap.parse_args(argv)
-    return desk(args.date)
+    return desk(args.date, sync=not args.no_sync)
 
 
 if __name__ == "__main__":

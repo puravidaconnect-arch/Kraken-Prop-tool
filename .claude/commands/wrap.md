@@ -19,6 +19,9 @@ You are the coordinator; read `.claude/agents/coordinator.md` first.
    exports `journal/journal.csv` (view only, never read it), and writes
    `state/last_wrap.json`.
 4. Show the WRAPPED summary line and the brief. If it lists UNREVIEWED trades,
-   say so. Stop.
+   say so. The script then commits the record (state, journal, logs, lessons)
+   and pushes it to GitHub. If it prints `SYNC FAILED`, the day is not saved:
+   run `python -m src.sync push` until it succeeds before the session ends.
+   Stop.
 
 Never edit the state files by hand. Never read `journal.csv`.

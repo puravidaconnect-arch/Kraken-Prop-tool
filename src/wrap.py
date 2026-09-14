@@ -14,6 +14,7 @@ from pathlib import Path
 from src import journal
 from src.events import in_window, load_events
 from src.state import Paths, DEFAULT, load_json, save_json, save_last_wrap
+from src.sync import SyncError, push
 
 
 def open_position_row(t: dict) -> dict:
@@ -114,6 +115,7 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="End-of-day wrap.")
     ap.add_argument("--date", default=_date.today().isoformat())
     ap.add_argument("--posture", default="not stated", help="one-line market posture for the brief")
+    ap.add_argument("--no-sync", action="store_true", help="do not push the record to origin/main")
     args = ap.parse_args(argv)
     r = wrap(args.date, args.posture)
     a = r["account_state"]
@@ -123,6 +125,15 @@ def main(argv=None) -> int:
     if r["unreviewed"]:
         print(f"  UNREVIEWED closed trades (run reviewer): {r['unreviewed']}")
     print(f"  wrote daily_log/{r['date']}.md, state/next_day_brief.md, {'journal/journal.csv' if r['csv'] else 'no csv (empty journal)'}, state/last_wrap.json")
+    if args.no_sync:
+        return 0
+    try:
+        status = push(f"wrap {r['date']}")
+    except SyncError as exc:
+        print(f"SYNC FAILED: {exc}\n  The day is NOT saved to GitHub. Fix the push (python -m src.sync push) before closing this session.")
+        return 1
+    if status != "sync off":
+        print(f"  record: {status}")
     return 0
 
 

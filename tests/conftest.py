@@ -1,3 +1,7 @@
+import os
+
+os.environ["STUDIO_NO_SYNC"] = "1"  # tests never touch git or the remote
+
 import pytest
 
 

@@ -16,6 +16,7 @@ from pathlib import Path
 
 from src import journal
 from src.state import DEFAULT
+from src.sync import SyncError, push
 
 LEVEL_TOL = 0.003  # exit within 0.3% of stop/target counts as that level
 
@@ -100,6 +101,17 @@ def _yes_no(v: str) -> bool:
     raise argparse.ArgumentTypeError("expected yes or no")
 
 
+def _push(message: str) -> int:
+    try:
+        status = push(message)
+    except SyncError as exc:
+        print(f"SYNC FAILED: {exc}. Saved locally only; run python -m src.sync push before closing.")
+        return 1
+    if status != "sync off":
+        print(f"record: {status}")
+    return 0
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="Write a trade report to the journal.")
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -133,7 +145,7 @@ def main(argv=None) -> int:
         print(f"REPORT REFUSED: {exc}")
         return 2
     print(json.dumps(t, indent=2))
-    return 0
+    return _push(f"report {args.id}")
 
 
 if __name__ == "__main__":

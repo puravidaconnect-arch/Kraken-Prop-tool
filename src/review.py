@@ -14,6 +14,7 @@ from pathlib import Path
 from src import journal
 from src.lessons import Lesson, append, load as load_lessons
 from src.state import DEFAULT
+from src.sync import SyncError, push
 
 TIGHT_STOP_ATR = 1.0        # a stop closer than this that gets hit is a candidate "stop_too_tight"
 CHASE_TOL = 0.002           # fill beyond the entry zone by more than 0.2% is "entry_chased"
@@ -75,6 +76,17 @@ def unreviewed(journal_dir: Path = None) -> list[dict]:
     return [t for t in journal.list_tickets("closed", journal_dir or journal.JOURNAL_DIR) if not t.get("review_tag")]
 
 
+def _push(message: str) -> int:
+    try:
+        status = push(message)
+    except SyncError as exc:
+        print(f"SYNC FAILED: {exc}. Saved locally only; run python -m src.sync push before closing.")
+        return 1
+    if status != "sync off":
+        print(f"record: {status}")
+    return 0
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="Reviewer: suggest a tag, record tag + lesson.")
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -93,6 +105,7 @@ def main(argv=None) -> int:
             print(json.dumps(suggest_tag(journal.load_ticket(args.id)), indent=2))
         elif args.cmd == "record":
             print(json.dumps(record_review(args.id, args.tag, args.lesson, args.kind, args.agent, args.date, args.applied), indent=2))
+            return _push(f"review {args.id}")
         else:
             for t in unreviewed():
                 print(f"{t['id']}  {t['outcome']}  {t['result_usd']:+.2f}  followed_plan={t['followed_plan']}")
