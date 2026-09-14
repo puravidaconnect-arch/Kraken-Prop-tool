@@ -10,7 +10,10 @@ exchange. It only reads Kraken's public price data, which needs no API key.
 
 The full spec is `CLAUDE.md`. The hard rules are `config/risk_rules.md`.
 
-## One-time setup
+## Two ways to run it
+
+**On your own computer.** Clone the repo, install, open the folder in Claude Code.
+Needed for the phone form and for long backtests.
 
 ```
 git clone https://github.com/puravidaconnect-arch/Kraken-Prop-tool
@@ -18,6 +21,20 @@ cd Kraken-Prop-tool
 pip install -r requirements.txt
 pytest
 ```
+
+**In Claude Code on the web.** Nothing to install. Start a session on this repo,
+and in the environment's network settings allow `api.kraken.com` and
+`futures.kraken.com`. Each session is a fresh copy of the repo, so the record
+(state, journal, daily logs, lessons) lives on GitHub: `/desk` pulls it first,
+and `/plan`, `/report`, the reviewer and `/wrap` push it after every write.
+Always finish a trading day with `/wrap`; if it prints `SYNC FAILED`, run
+`python -m src.sync push` until it succeeds before closing the session. The
+push lands on `main` only when the session changed nothing but the record; a
+session that also edited code pushes to its own branch and says so, so do
+code work and trading in separate sessions. The phone form does not apply on
+the web: `/report` takes the screenshot from the Claude app instead.
+
+## One-time setup
 
 Then set your real numbers before the first day:
 

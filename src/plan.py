@@ -20,6 +20,7 @@ from src.market_data import MarketDataError, get_market
 from src.planner import NoTrade, build_ticket
 from src.sizing import loss_if_stopped
 from src.state import Paths, DEFAULT, load_json, roll_day, save_json
+from src.sync import SyncError, push
 
 EVENTS_FLAGS = ("go", "caution", "no-trade")
 
@@ -111,6 +112,13 @@ def run(pair: str, events_flag: str | None = None, date: str | None = None, save
     if save:
         path = journal.save_ticket(ticket, paths.journal)
         print(f"\nsaved {path.parent.name}/{path.name}  (status: planned)", file=out)
+        try:
+            status = push(f"plan {ticket['id']}", paths.root)
+        except SyncError as exc:
+            print(f"SYNC FAILED: {exc}. Ticket is saved locally only; run python -m src.sync push before closing.", file=out)
+            return 1
+        if status != "sync off":
+            print(f"record: {status}", file=out)
     return 0
 
 
