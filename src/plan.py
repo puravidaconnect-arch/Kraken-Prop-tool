@@ -1,6 +1,7 @@
 """`python -m src.plan BTC` — the deterministic half of /plan.
 
-guardian pre-check → market_data → analyst → planner → guardian → print + save.
+guardian pre-check → market_data → analyst → events (from state/events.json,
+written by events_scout today) → planner → guardian → checklist → print + save.
 Any block or no-trade prints one line and stops. Exit codes: 0 ticket saved,
 2 no trade / blocked, 1 market data failure."""
 from __future__ import annotations
@@ -12,11 +13,13 @@ from datetime import date as _date
 
 from src import journal
 from src.analyst import analyse
+from src.checklist import render, run_checklist
+from src.events import fresh_flag
 from src.guardian import can_trade_today, check_ticket
 from src.market_data import MarketDataError, get_market
 from src.planner import NoTrade, build_ticket
 from src.sizing import loss_if_stopped
-from src.state import load_account_state, load_open_positions, load_settings
+from src.state import Paths, DEFAULT, load_json, roll_day, save_json
 
 EVENTS_FLAGS = ("go", "caution", "no-trade")
 
@@ -51,10 +54,12 @@ def market_read_lines(pair: str, analysis: dict) -> str:
     ])
 
 
-def run(pair: str, events_flag: str = "go", date: str | None = None, save: bool = True,
-        market_getter=get_market, out=sys.stdout, journal_dir=None) -> int:
-    settings, acct, open_pos = load_settings(), load_account_state(), load_open_positions()
+def run(pair: str, events_flag: str | None = None, date: str | None = None, save: bool = True,
+        market_getter=get_market, out=sys.stdout, paths: Paths = DEFAULT) -> int:
     date = date or _date.today().isoformat()
+    settings, open_pos = load_json(paths.settings), load_json(paths.open_positions)
+    acct = roll_day(load_json(paths.account_state), date)
+    save_json(paths.account_state, acct)
 
     pre = can_trade_today(acct, open_pos, settings)
     if not pre.allow:
@@ -63,6 +68,12 @@ def run(pair: str, events_flag: str = "go", date: str | None = None, save: bool 
     if pair not in settings["instruments"]:
         print(f"BLOCKED (guardian): instrument {pair!r} not allowed", file=out)
         return 2
+
+    if events_flag is None:
+        events_flag, _ = fresh_flag(date, paths.events)
+        if events_flag is None:
+            print("NO TRADE: events not scouted today — run events_scout (python -m src.events set ...) first", file=out)
+            return 2
 
     try:
         md = market_getter(pair)
@@ -91,9 +102,14 @@ def run(pair: str, events_flag: str = "go", date: str | None = None, save: bool 
     print("", file=out)
     print(readable(ticket, note, md.funding), file=out)
     print("", file=out)
+    check = run_checklist(ticket, acct, open_pos, settings, date)
+    print(render(check), file=out)
+    if not check["go"]:
+        return 2
+    print("", file=out)
     print(json.dumps(ticket, indent=2), file=out)
     if save:
-        path = journal.save_ticket(ticket, journal_dir or journal.JOURNAL_DIR)
+        path = journal.save_ticket(ticket, paths.journal)
         print(f"\nsaved {path.parent.name}/{path.name}  (status: planned)", file=out)
     return 0
 
@@ -101,8 +117,8 @@ def run(pair: str, events_flag: str = "go", date: str | None = None, save: bool 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="Build a trade ticket from live Kraken data.")
     ap.add_argument("pair", help="BTC or ETH")
-    ap.add_argument("--events-flag", choices=EVENTS_FLAGS, default="go",
-                    help="verdict from events_scout (default go; events_scout arrives in Phase 3)")
+    ap.add_argument("--events-flag", choices=EVENTS_FLAGS, default=None,
+                    help="override the events_scout flag stored in state/events.json")
     ap.add_argument("--date", help="ticket date YYYY-MM-DD (default today)")
     ap.add_argument("--no-save", action="store_true", help="print only, do not write journal/")
     args = ap.parse_args(argv)

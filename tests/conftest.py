@@ -56,3 +56,18 @@ def good_ticket():
         "guardian_verdict": None,
         "status": "planned",
     }
+
+
+@pytest.fixture
+def repo(tmp_path, settings, account_state):
+    """A throwaway repo root with config/state/journal laid out like the real one."""
+    import json
+    from src.state import Paths
+    p = Paths(tmp_path)
+    for d in (p.journal, p.daily_log, p.settings.parent, p.account_state.parent):
+        d.mkdir(parents=True, exist_ok=True)
+    p.settings.write_text(json.dumps(settings))
+    p.account_state.write_text(json.dumps(account_state))
+    p.open_positions.write_text("[]")
+    p.lessons.write_text("# Lessons\n")
+    return p
