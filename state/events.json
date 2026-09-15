@@ -1,0 +1,28 @@
+{
+  "as_of": "2026-09-15",
+  "window_end": "2026-09-20",
+  "flag": "no-trade",
+  "events": [
+    {
+      "date": "2026-09-15",
+      "name": "Senate cloture vote on CLARITY Act",
+      "severity": "minor"
+    },
+    {
+      "date": "2026-09-16",
+      "name": "FOMC rate decision + SEP/dot plot (hike priced ~80%)",
+      "severity": "major"
+    },
+    {
+      "date": "2026-09-18",
+      "name": "BoJ rate decision (hike possible)",
+      "severity": "minor"
+    },
+    {
+      "date": "2026-09-18",
+      "name": "Weekly BTC/ETH options expiry",
+      "severity": "minor"
+    }
+  ],
+  "source": "events_scout"
+}
