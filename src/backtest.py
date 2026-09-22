@@ -18,7 +18,7 @@ from src.planner import PLANNER_PARAMS, NoTrade, build_ticket
 MIN_YEARS = 2
 BARS_PER_YEAR = 365
 ACCOUNT = {"starting_balance": 5000, "current_balance": 5000}
-SETTINGS = {"instruments": ["BTC", "ETH"], "risk_pct": 0.005, "min_rr": 2.0, "leverage_cap": 5}
+SETTINGS = {"instruments": ["BTC", "ETH", "XRP"], "risk_pct": 0.005, "min_rr": 2.0, "leverage_cap": 5}
 
 
 @dataclass

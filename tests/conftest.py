@@ -14,7 +14,7 @@ def settings():
         "daily_loss_cap_pct": 0.02,
         "max_drawdown_pct": 0.10,
         "leverage_cap": 5,
-        "instruments": ["BTC", "ETH"],
+        "instruments": ["BTC", "ETH", "XRP"],
         "hold_window_days": 5,
         "min_rr": 2.0,
         "max_losses_per_day": 2,

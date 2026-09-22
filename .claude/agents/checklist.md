@@ -26,7 +26,7 @@ events flag not no-trade · R:R ≥ min · risk ≤ 1% · risk ≤ remaining dai
 loss-if-stopped = risk_usd (±2%) · leverage ≤ cap · no other open position · loss count < 2.
 
 ## Order parameters
-Kraken Pro perpetual (`PF_XBTUSD` / `PF_ETHUSD`): limit at the worst-case entry of the
+Kraken Pro perpetual (`PF_XBTUSD` / `PF_ETHUSD` / `PF_XRPUSD`): limit at the worst-case entry of the
 zone, size in coin, reduce-only stop and take-profit at the ticket's levels, GTC, post-only.
 The human may scale in across the zone; if they do, the average fill must stay inside it.
 

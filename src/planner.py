@@ -6,7 +6,8 @@ from __future__ import annotations
 from src.journal import new_ticket
 from src.sizing import SizingError, reward_to_risk, size_position
 
-PRICE_DECIMALS = {"BTC": 0, "ETH": 1}
+PRICE_DECIMALS = {"BTC": 0, "ETH": 1, "XRP": 4}   # Kraken perp tick sizes
+QTY_DECIMALS = {"XRP": 0}                          # PF_XRPUSD trades whole XRP
 
 # Tunable only through a recorded lesson + backtest (CLAUDE.md §7).
 PLANNER_PARAMS = {
@@ -25,6 +26,10 @@ class NoTrade(Exception):
 def _r(pair: str, x: float) -> float:
     d = PRICE_DECIMALS.get(pair, 2)
     return round(x, d) if d else float(round(x))
+
+
+def _tick(pair: str) -> float:
+    return 10 ** -PRICE_DECIMALS.get(pair, 2)
 
 
 def _trend_levels(direction: str, lv: dict, pp: dict) -> tuple[float, float, str]:
@@ -89,14 +94,18 @@ def build_ticket(pair: str, date: str, analysis: dict, account_state: dict, sett
     if direction == "long":
         zone = [_r(pair, level - half), _r(pair, min(level + half, lv["close"]))]
         worst = zone[1]
-        stop = min(stop, worst - pp["min_stop_atr"] * a)
-        target = worst + min_rr * (worst - stop)
+        stop = _r(pair, min(stop, worst - pp["min_stop_atr"] * a))
     else:
         zone = [_r(pair, max(level - half, lv["close"])), _r(pair, level + half)]
         worst = zone[0]
-        stop = max(stop, worst + pp["min_stop_atr"] * a)
-        target = worst - min_rr * (stop - worst)
-    stop, target = _r(pair, stop), _r(pair, target)
+        stop = _r(pair, max(stop, worst + pp["min_stop_atr"] * a))
+    # Target from the *rounded* stop, then nudged one tick at a time away from
+    # the entry until the rounded ticket really clears min_rr (rounding the two
+    # levels independently can leave R:R a hair under 2.0 and the guardian blocks).
+    sign = 1 if direction == "long" else -1
+    target = _r(pair, worst + sign * min_rr * abs(worst - stop))
+    while reward_to_risk(worst, stop, target) < min_rr:
+        target = _r(pair, target + sign * _tick(pair))
     if structural_target is not None:
         beyond = target > structural_target if direction == "long" else target < structural_target
         if beyond:
@@ -105,7 +114,8 @@ def build_ticket(pair: str, date: str, analysis: dict, account_state: dict, sett
     try:
         sz = size_position(worst, stop, account_state["starting_balance"], settings["risk_pct"],
                            current_balance=account_state.get("current_balance"),
-                           leverage_cap=settings.get("leverage_cap", 5))
+                           leverage_cap=settings.get("leverage_cap", 5),
+                           qty_decimals=QTY_DECIMALS.get(pair, 5))
     except SizingError as exc:
         raise NoTrade(f"cannot size position: {exc}") from exc
 

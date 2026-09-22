@@ -1,6 +1,6 @@
 # Trading Studio
 
-A local agent studio for swing-trading BTC and ETH perpetuals on a Kraken Prop
+A local agent studio for swing-trading BTC, ETH and XRP perpetuals on a Kraken Prop
 funded account, on the daily timeframe. Its first job is to keep the account
 alive; its second is to produce consistent, rule-based trade plans; its third
 is to improve its own rules from a structured journal.
@@ -54,7 +54,7 @@ with the coordinator agent, which calls the deterministic scripts in `src/`.
 
 ### 1. Morning: `/desk`
 
-Scouts scheduled events for the hold window, refreshes BTC and ETH, and prints
+Scouts scheduled events for the hold window, refreshes BTC, ETH and XRP, and prints
 the morning report ending in **TRADE / WAIT / NO-TRADE DAY**. It refuses to run
 if yesterday was not wrapped (first day excepted), and demands a `/report`
 first if an open position is already past its stop or target.

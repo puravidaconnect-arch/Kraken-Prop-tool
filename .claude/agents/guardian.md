@@ -32,7 +32,7 @@ stop_ok = check_stop_update(ticket, new_stop)             # mid-trade stop chang
 ```
 
 ## What is checked
-- instrument in `settings.instruments` (BTC, ETH only)
+- instrument in `settings.instruments` (BTC, ETH, XRP only)
 - direction is `long` or `short`; stop and target present; entry_zone well formed
 - geometry: long needs stop < zone < target, short the mirror
 - reward-to-risk ≥ `min_rr` measured from the **worst-case** entry in the zone

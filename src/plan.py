@@ -124,7 +124,7 @@ def run(pair: str, events_flag: str | None = None, date: str | None = None, save
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="Build a trade ticket from live Kraken data.")
-    ap.add_argument("pair", help="BTC or ETH")
+    ap.add_argument("pair", help="BTC, ETH or XRP")
     ap.add_argument("--events-flag", choices=EVENTS_FLAGS, default=None,
                     help="override the events_scout flag stored in state/events.json")
     ap.add_argument("--date", help="ticket date YYYY-MM-DD (default today)")

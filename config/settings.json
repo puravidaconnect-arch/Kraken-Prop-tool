@@ -6,7 +6,7 @@
   "prop_daily_loss_limit_pct": 0.03,
   "max_drawdown_pct": 0.10,
   "leverage_cap": 5,
-  "instruments": ["BTC", "ETH"],
+  "instruments": ["BTC", "ETH", "XRP"],
   "hold_window_days": 5,
   "min_rr": 2.0,
   "max_losses_per_day": 2,

@@ -140,3 +140,8 @@ def test_stop_never_widened():
     short_ticket = {"direction": "short", "stop": 3200}
     assert check_stop_update(short_ticket, 3150).allow
     assert not check_stop_update(short_ticket, 3250).allow
+
+
+def test_allows_xrp(good_ticket, account_state, settings):
+    good_ticket["pair"] = "XRP"
+    assert check_ticket(good_ticket, account_state, [], settings).allow

@@ -106,3 +106,10 @@ def test_csv_round_trip(tmp_path):
     (tmp_path / "bad.csv").write_text("a,b\n1,2\n")
     with pytest.raises(MarketDataError):
         load_ohlc_csv(tmp_path / "bad.csv")
+
+
+def test_xrp_is_a_supported_pair():
+    from src.market_data import PERP_SYMBOLS, SPOT_PAIRS
+    assert SPOT_PAIRS["XRP"] == "XRPUSD" and PERP_SYMBOLS["XRP"] == "PF_XRPUSD"
+    tickers = {"tickers": [{"symbol": "PF_XRPUSD", "fundingRate": "0.00002", "markPrice": "1.55"}]}
+    assert parse_funding(tickers, "XRP")["mark_price"] == 1.55

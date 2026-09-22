@@ -12,8 +12,8 @@ import requests
 
 KRAKEN_OHLC_URL = "https://api.kraken.com/0/public/OHLC"
 KRAKEN_FUTURES_TICKERS_URL = "https://futures.kraken.com/derivatives/api/v3/tickers"
-SPOT_PAIRS = {"BTC": "XBTUSD", "ETH": "ETHUSD"}
-PERP_SYMBOLS = {"BTC": "PF_XBTUSD", "ETH": "PF_ETHUSD"}
+SPOT_PAIRS = {"BTC": "XBTUSD", "ETH": "ETHUSD", "XRP": "XRPUSD"}
+PERP_SYMBOLS = {"BTC": "PF_XBTUSD", "ETH": "PF_ETHUSD", "XRP": "PF_XRPUSD"}
 INTERVALS = {"daily": 1440, "weekly": 10080}  # minutes, Kraken's own codes
 COLUMNS = ["time", "open", "high", "low", "close", "vwap", "volume", "count"]
 TIMEOUT = 20
@@ -105,7 +105,7 @@ def parse_funding(payload: dict, pair: str) -> dict:
 
 
 def fetch_funding_rate(pair: str, session: requests.Session | None = None) -> dict:
-    """Current funding rate for the Kraken perpetual (PF_XBTUSD / PF_ETHUSD)."""
+    """Current funding rate for the Kraken perpetual (PF_XBTUSD / PF_ETHUSD / PF_XRPUSD)."""
     _check_pair(pair)
     http = session or requests
     try:

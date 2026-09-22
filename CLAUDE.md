@@ -8,7 +8,7 @@ Copy this file to `CLAUDE.md` in the repo root so it is loaded in every session.
 
 ## 1. Purpose
 
-A local agent studio that helps me swing-trade BTC and ETH perpetuals on a **Kraken Prop** funded account, on the daily timeframe. The studio's first job is to keep the account alive; its second job is to produce consistent, rule-based trade plans; its third job is to improve its own rules from a structured journal.
+A local agent studio that helps me swing-trade BTC, ETH and XRP perpetuals on a **Kraken Prop** funded account, on the daily timeframe. The studio's first job is to keep the account alive; its second job is to produce consistent, rule-based trade plans; its third job is to improve its own rules from a structured journal.
 
 **The human places every order.** Nothing in this repo sends orders to an exchange. Automated execution is out of scope unless I explicitly add it later.
 
@@ -21,7 +21,7 @@ These are in `config/risk_rules.md` and every agent must read that file before a
 - Max daily loss: **3% of starting balance**. Studio treats **2%** as the hard internal cap.
 - Max drawdown does not reset. Track `drawdown_room` continuously.
 - Risk per trade: **0.5% of starting balance**, configurable but capped at 1%.
-- Instruments: **BTC and ETH only**. Reject anything else.
+- Instruments: **BTC, ETH and XRP only**. Reject anything else. (XRP added 2026-09-22.)
 - One open position at a time.
 - After **two losses in a day**, no new trades that day.
 - Every trade plan must include stop loss and take profit **before** entry.
@@ -79,7 +79,7 @@ Each agent is a markdown file in `.claude/agents/` describing its role, inputs, 
 | Agent | Responsibility | Reads | Writes |
 |---|---|---|---|
 | **guardian** | Gatekeeper. Validates every plan against `risk_rules.md` and `account_state.json`. Blocks violations. | risk_rules, account_state, open_positions | verdict: allow / block + reason |
-| **market_data** | Pulls daily + weekly OHLCV for BTC/ETH from Kraken public API, computes indicators, reads funding rate. | settings | structured snapshot (JSON) |
+| **market_data** | Pulls daily + weekly OHLCV for BTC/ETH/XRP from Kraken public API, computes indicators, reads funding rate. | settings | structured snapshot (JSON) |
 | **analyst** | Classifies market as trending / ranging / coiling using explicit rules. Finds support/resistance from swing points. Checks weekly agrees with daily. Picks strategy. Accepts a chart screenshot as fallback input. | snapshot, lessons | market read + strategy choice |
 | **events_scout** | Web search for scheduled macro events, ETF decisions, large token unlocks, exchange news within hold window. | settings | flag: go / caution / no-trade, with dates |
 | **planner** | Builds the trade ticket: entry zone, structural stop, target ≥ 2:1, position size via `sizing.py`. | analyst output, events flag, account_state | trade ticket (JSON + readable) |
@@ -195,7 +195,7 @@ The JSON journal is the single source of truth. Never take trade data from a spr
 1. If `last_wrap.date` is not the previous trading day → stop and say "Run /wrap for <date> first."
 2. If any ticket is `open` and price is beyond its stop/target → ask for `/report` before continuing.
 3. Load state + brief + last 5 lessons.
-4. market_data refresh for BTC and ETH; events_scout for hold window.
+4. market_data refresh for BTC, ETH and XRP; events_scout for hold window.
 5. Print the **morning report** (≤ 25 lines): account status & remaining daily budget, open trades vs stop/target, market read for BTC & ETH, events, reviewer reminders, verdict: **TRADE / WAIT / NO-TRADE DAY**.
 
 ---

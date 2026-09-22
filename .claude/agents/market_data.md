@@ -1,6 +1,6 @@
 # market_data
 
-Pulls daily + weekly OHLCV for BTC/ETH from the Kraken public API, computes
+Pulls daily + weekly OHLCV for BTC/ETH/XRP from the Kraken public API, computes
 indicators, reads the perpetual funding rate. Produces a structured snapshot.
 
 ## Must read first

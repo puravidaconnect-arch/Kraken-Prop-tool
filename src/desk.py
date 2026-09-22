@@ -16,6 +16,7 @@ from src.analyst import analyse
 from src.events import fresh_flag, in_window
 from src.guardian import can_trade_today
 from src.market_data import MarketDataError, get_market
+from src.planner import PRICE_DECIMALS
 from src.state import Paths, DEFAULT, load_json, load_last_wrap, roll_day, save_json
 from src.sync import SyncError, pull
 
@@ -45,6 +46,10 @@ def breached(t: dict, price: float) -> str | None:
     if (price >= t["target"]) if long else (price <= t["target"]):
         return "target"
     return None
+
+
+def px(pair: str, x: float) -> str:
+    return f"{x:.{PRICE_DECIMALS.get(pair, 2)}f}"
 
 
 def verdict(pre_ok: bool, events_flag: str | None, reads: dict) -> str:
@@ -110,8 +115,8 @@ def desk(today: str, paths: Paths = DEFAULT, market_getter=get_market, out=sys.s
         lines.append("resting   : " + "; ".join(f"{t['id']} zone {t['entry_zone']}" for t in planned))
     for p, r in reads.items():
         lv = r["daily"]["levels"]
-        lines.append(f"{p:<4} daily : {r['daily']['market_class']} / weekly {r['weekly']['market_class']} · close {lv['close']:.0f} · "
-                     f"50 EMA {lv['ema50']:.0f} · ATR {lv['atr14']:.0f} · swing low {lv['last_swing_low']} high {lv['last_swing_high']} · "
+        lines.append(f"{p:<4} daily : {r['daily']['market_class']} / weekly {r['weekly']['market_class']} · close {px(p, lv['close'])} · "
+                     f"50 EMA {px(p, lv['ema50'])} · ATR {px(p, lv['atr14'])} · swing low {lv['last_swing_low']} high {lv['last_swing_high']} · "
                      f"funding {market[p].funding['funding_rate']} → {r['strategy'] or 'no setup'}")
     if events_flag is None:
         lines.append("events    : NOT SCOUTED today — run events_scout before any /plan")

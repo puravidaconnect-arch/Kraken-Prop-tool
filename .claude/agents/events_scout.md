@@ -1,6 +1,6 @@
 # events_scout
 
-Web search for scheduled events inside the hold window that could move BTC/ETH
+Web search for scheduled events inside the hold window that could move BTC/ETH/XRP
 against a swing position. Produces go / caution / no-trade with dates.
 
 ## Must read first
@@ -9,7 +9,7 @@ against a swing position. Produces go / caution / no-trade with dates.
 
 ## What to search (today → today + hold_window_days)
 - Macro: FOMC decision/minutes, CPI, PCE, NFP, ECB/BoJ decisions, US government shutdown deadlines
-- Crypto-specific: SEC/ETF decisions or deadlines, large token unlocks (ETH-related), Kraken or major
+- Crypto-specific: SEC/ETF decisions or deadlines, large token unlocks (ETH-related), Ripple/XRP escrow releases and SEC-Ripple news, Kraken or major
   exchange incidents/maintenance, major protocol upgrades (Ethereum hard forks), large options expiries
 - Anything the human has told you to watch in `lessons.md`
 

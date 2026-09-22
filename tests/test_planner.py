@@ -79,3 +79,12 @@ def test_range_fade_or_too_narrow(account_state, settings):
 def test_disallowed_instrument(account_state, settings):
     with pytest.raises(NoTrade):
         _build(trend(), trend(n=250), account_state, settings, pair="SOL")
+
+
+def test_xrp_ticket_uses_tick_and_whole_units(account_state, settings):
+    t = _build(trend(start_price=1.5), trend(n=250, start_price=1.5), account_state, settings, pair="XRP")
+    assert t["pair"] == "XRP" and t["position_qty"] == int(t["position_qty"])
+    for level in (t["stop"], t["target"], *t["entry_zone"]):
+        assert round(level, 4) == level
+    assert loss_if_stopped(t["entry_zone"][1], t["stop"], t["position_qty"]) == pytest.approx(25, rel=0.02)
+    assert check_ticket(t, account_state, [], settings).allow

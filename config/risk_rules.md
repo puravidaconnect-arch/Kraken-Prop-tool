@@ -10,7 +10,8 @@ human-readable source of truth it implements.
 2. **Max drawdown does not reset.** `drawdown_room` is tracked continuously
    and only ever shrinks unless the balance recovers above the floor.
 3. **Risk per trade: 0.5% of starting balance.** Configurable, capped at **1%**.
-4. **Instruments: BTC and ETH only.** Anything else is rejected.
+4. **Instruments: BTC, ETH and XRP only.** Anything else is rejected.
+   (XRP added 2026-09-22 by the human.)
 5. **One open position at a time.**
 6. **After two losses in a day, no new trades that day.**
 7. **Every trade plan includes stop loss and take profit before entry.**

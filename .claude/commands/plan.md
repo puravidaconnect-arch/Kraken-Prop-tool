@@ -1,4 +1,4 @@
-Build a trade ticket for $ARGUMENTS (BTC or ETH). Follow CLAUDE.md §6 exactly.
+Build a trade ticket for $ARGUMENTS (BTC, ETH or XRP). Follow CLAUDE.md §6 exactly.
 You are the coordinator; read `.claude/agents/coordinator.md` first.
 
 1. Read `config/risk_rules.md`.
