@@ -1,0 +1,18 @@
+{
+  "as_of": "2026-09-22",
+  "window_end": "2026-09-27",
+  "flag": "caution",
+  "events": [
+    {
+      "date": "2026-09-25",
+      "name": "BTC/ETH quarterly options expiry (~16.6B USD Deribit, 08:00 UTC)",
+      "severity": "minor"
+    },
+    {
+      "date": "2026-09-25",
+      "name": "US durable goods, jobless claims, Q2 GDP final",
+      "severity": "minor"
+    }
+  ],
+  "source": "events_scout"
+}
